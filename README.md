@@ -14,7 +14,7 @@ src/main/resources/db/hmdp.sql 文件
 
 ### 1.3 修改配置文件
 
-![image-20221019165545267](../../Library/Application Support/typora-user-images/image-20221019165545267.png)
+![image-20221019165545267](https://cuihua.top/oss/tortoise_2022-10-19_170726.png)
 
 
 
