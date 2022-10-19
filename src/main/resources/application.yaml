@@ -11,7 +11,7 @@ spring:
   redis:
     host: cuihua.top
     port: 6379
-    password: 947253705
+    password: 0
     lettuce:
       pool:
         max-active: 10
