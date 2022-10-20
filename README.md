@@ -23,3 +23,33 @@ src/main/resources/db/hmdp.sql 文件
 成功导入黑马点评项目
 
 完成用户手机登录功能
+
+
+
+## 2.2 Redis缓存
+
+图片-》缓存模型
+
+图片-》流程图
+
+### 2.2.1 商户查询缓存
+
+```java
+// 1. 查redis
+String shopJson = redisTemplate.opsForValue().get(RedisConstants.CACHE_SHOP_KEY + id);
+// 2. 命中
+if (shopJson != null && !shopJson.isEmpty()) {
+  Shop shop = JSONUtil.toBean(shopJson, Shop.class);
+  return Result.ok(shop);
+}
+// 3. 未命中 : 查询数据库
+Shop shop = getById(id);
+if (shop == null) {
+  return Result.fail("商户不存在");
+}
+// 4. 存在即写入redis
+redisTemplate.opsForValue().set(RedisConstants.CACHE_SHOP_KEY + id, JSONUtil.toJsonPrettyStr(shop));
+// 5. 返回
+return Result.ok(shop);
+```
+
