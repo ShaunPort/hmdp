@@ -3,6 +3,7 @@ package com.hmdp.utils.latch;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.Duration;
+import java.util.UUID;
 
 /**
  * @Author Shawn
@@ -12,7 +13,7 @@ import java.time.Duration;
 public class SimpleDLock implements DistributedLatch{
     private static final String key_prefix = "Latch:";
     private String name;
-
+    private String lockId;
     private StringRedisTemplate template;
 
     /**
@@ -27,12 +28,18 @@ public class SimpleDLock implements DistributedLatch{
 
     @Override
     public boolean tryLock(long timeoutSec) {
-        Boolean flag = template.opsForValue().setIfAbsent(key_prefix + name, "", Duration.ofSeconds(timeoutSec));
+        lockId = UUID.randomUUID().toString();
+        Boolean flag = template.opsForValue().setIfAbsent(key_prefix + name, lockId, Duration.ofSeconds(timeoutSec));
         return Boolean.TRUE.equals(flag);
     }
 
+
     @Override
     public void unlock() {
-        template.delete(key_prefix + name);
+        // 防止误删
+        String s = template.opsForValue().get(key_prefix + name);
+        if (s.equals(lockId)) {
+            template.delete(key_prefix + name);
+        }
     }
 }
