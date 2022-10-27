@@ -299,3 +299,40 @@ public class HmDianPingApplication {
 
 
 具体代码看src/main/java/com/hmdp/service/impl/VoucherOrderServiceImpl.java
+
+
+
+
+/////
+public class SimpleDLock implements DistributedLatch{
+private static final String key_prefix = "Latch:";
+private String name;
+private String lockId;
+private StringRedisTemplate template;
+
+    /**
+     * 构造一个简单的分布式锁
+     * @param name 锁名字
+     * @param template Redis操作器
+     */
+    public SimpleDLock(String name, StringRedisTemplate template) {
+        this.name = name;
+        this.template = template;
+    }
+
+    @Override
+    public boolean tryLock(long timeoutSec) {
+        lockId = UUID.randomUUID().toString();
+        Boolean flag = template.opsForValue().setIfAbsent(key_prefix + name, lockId, Duration.ofSeconds(timeoutSec));
+        return Boolean.TRUE.equals(flag);
+    }
+
+    @Override
+    public void unlock() {
+        // 防止误删
+        String s = template.opsForValue().get(key_prefix + name);
+        if (s.equals(lockId)) {
+            template.delete(key_prefix + name);
+        }
+    }
+}
