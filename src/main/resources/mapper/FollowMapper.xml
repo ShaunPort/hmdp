@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hmdp.mapper.FollowMapper">
+
+
+    <select id="queryAllFollowUserIdByUserId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT follow_user_id FROM tb_follow WHERE ${userId} = user_id
+    </select>
+    <select id="queryCommonFollower" resultType="java.lang.Long">
+        SELECT t1.follow_user_id FROM tb_follow as t1 join tb_follow as t2 on t1.follow_user_id = t2.follow_user_id
+        WHERE ${userId} = t1.user_id AND ${otherId} = t2.user_id;
+    </select>
+</mapper>

@@ -22,4 +22,7 @@ public class RedisConstants {
     public static final String USER_SIGN_KEY = "hmdp:sign:";
 
     public static final String CACHE_SHOP_TYPE_KEY = "hmdp:cache:shop-type";
+
+    public static final String FOLLOWER_CACHE_KEY = "hmdp:cache:follow:";
+    public static final Long FOLLOWER_CACHE_TTL = 10L;
 }
