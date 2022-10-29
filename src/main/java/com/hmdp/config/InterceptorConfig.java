@@ -29,6 +29,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 "/user/code",
                 "/user/login",
                 "/blog/hot",
+                "/blog/*",
                 "/shop/**",
                 "/shop-type/**",
                 "/voucher/**"
