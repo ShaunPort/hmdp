@@ -13,6 +13,7 @@ import com.hmdp.service.IUserService;
 import com.hmdp.utils.RedisConstants;
 import com.hmdp.utils.RegexPatterns;
 import com.hmdp.utils.RegexUtils;
+import com.hmdp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -86,6 +89,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         redisTemplate.opsForHash().putAll(tokenKey, userMap);
         redisTemplate.expire(tokenKey, Duration.ofSeconds(RedisConstants.LOGIN_USER_TTL));
         return Result.ok(token);
+    }
+
+    @Override
+    public Result sign() {
+        Long id = UserHolder.getUser().getId();
+        LocalDateTime now = LocalDateTime.now();
+        String keySuffix = now.format(DateTimeFormatter.ofPattern("yyyyMM:"));
+        redisTemplate.opsForValue().setBit(RedisConstants.USER_SIGN_KEY + keySuffix + id, now.getDayOfMonth() - 1, true);
+        return Result.ok();
     }
 
     private User createUserWithPhone(String phone) {
