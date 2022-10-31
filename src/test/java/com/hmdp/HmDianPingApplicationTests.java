@@ -14,10 +14,7 @@ import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,5 +87,19 @@ class HmDianPingApplicationTests {
         });
     }
 
-
+    @Test
+    void testHyperLogLog() {
+        // 1488160
+        String key = "hmdp:uv";
+        Random random = new Random(System.currentTimeMillis());
+        String[] values = new String[1000];
+        for (int i = 0, j = 0; i < 2000000; ++i, ++j) {
+            values[j] = "user_" + i;
+            if (j == 999) {
+                j = 0;
+                stringRedisTemplate.opsForHyperLogLog().add(key, values);
+                System.out.println("submit" + i);
+            }
+        }
+    }
 }
